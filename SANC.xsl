@@ -73,7 +73,8 @@
                 <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css"
                                         rel="stylesheet" type="text/css"/>
 
-                <link rel="stylesheet" href="{$DOMAIN}/css/sanc_v_3_0.css"/>
+                <link rel="stylesheet" href="{$DOMAIN}/css/sanc_v_2_0.css"/>
+                <script src="{$DOMAIN}/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
                 
             </head>
             
@@ -115,7 +116,7 @@
                 <div class="jumbotron container-fullwidth">
                     <div class="row">
                         <div class="col-sm-3 rowspan">
-                            <img id="callout" class="img-responsive" src="{$DOMAIN}/imgs/great_seal_small_01.jpg" alt="callout"/>
+                            <img id="callout" class="img-responsive" src="imgs/great_seal_small_01.jpg" alt="callout"/>
                         </div>
                         <div class="col-sm-8">
                             <h3><xsl:value-of select="//archdesc/did/unittitle"/></h3>
@@ -234,7 +235,16 @@
         <xsl:variable name="id" select="@id"/>
         <xsl:variable name="level" select="@level"/>
         <xsl:variable name="title" select="did/unittitle"/>
-        <xsl:variable name="unitid" select="did/unitid[@type eq 'local ID']"/>
+        <xsl:variable name="unitid">
+            <xsl:choose>
+                <xsl:when test="empty(did/unitid[@type eq 'local ID'])"><xsl:value-of select="did/unitid[@type eq 'level ID']"/></xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="did/unitid[@type eq 'local ID']"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            
+        </xsl:variable>
+        
         <xsl:if test="@level = 'item'">
             <div id="{$id}" class="row">
                 <div class="col-md-2"><xsl:value-of select="$unitid"/></div>
@@ -265,7 +275,14 @@
         <xsl:variable name="id" select="@id"/>
         <xsl:variable name="level" select="@level"/>
         <xsl:variable name="title" select="did/unittitle"/>
-        <xsl:variable name="unitid" select="did/unitid"/>
+        <xsl:variable name="unitid">
+            <xsl:choose>
+                <xsl:when test="empty(did/unitid[@type eq 'local ID'])"><xsl:value-of select="did/unitid[@type eq 'level ID']"/></xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="did/unitid[@type eq 'local ID']"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="id_type" select="did/unitid/@type"/>
         
         
@@ -300,7 +317,14 @@
         <xsl:variable name="id" select="@id"/>
         <xsl:variable name="level" select="@level"/>
         <xsl:variable name="title" select="did/unittitle"/>
-        <xsl:variable name="unitid" select="did/unitid"/>
+        <xsl:variable name="unitid">
+            <xsl:choose>
+                <xsl:when test="empty(did/unitid[@type eq 'local ID'])"><xsl:value-of select="did/unitid[@type eq 'level ID']"/></xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="did/unitid[@type eq 'local ID']"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="id_type" select="did/unitid/@type"/>
         
         
@@ -334,7 +358,14 @@
         <xsl:variable name="id" select="@id"/>
         <xsl:variable name="level" select="@level"/>
         <xsl:variable name="title" select="did/unittitle"/>
-        <xsl:variable name="unitid" select="did/unitid"/>
+        <xsl:variable name="unitid">
+            <xsl:choose>
+                <xsl:when test="empty(did/unitid[@type eq 'local ID'])"><xsl:value-of select="did/unitid[@type eq 'level ID']"/></xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="did/unitid[@type eq 'local ID']"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="id_type" select="did/unitid/@type"/>
         
         
@@ -368,7 +399,14 @@
         <xsl:variable name="id" select="@id"/>
         <xsl:variable name="level" select="@level"/>
         <xsl:variable name="title" select="did/unittitle"/>
-        <xsl:variable name="unitid" select="did/unitid"/>
+        <xsl:variable name="unitid">
+            <xsl:choose>
+                <xsl:when test="empty(did/unitid[@type eq 'local ID'])"><xsl:value-of select="did/unitid[@type eq 'level ID']"/></xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="did/unitid[@type eq 'local ID']"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="id_type" select="did/unitid/@type"/>
         
         
@@ -401,7 +439,7 @@
         <xsl:param name="cell_1"/>
         <xsl:param name="cell_2"/>
         <div class="row">
-            <div class="col-md-2"><strong><xsl:value-of select="$cell_1"/></strong></div>
+            <div class="col-md-3"><strong><xsl:value-of select="$cell_1"/></strong></div>
             <div class="col-md-9"><xsl:value-of select="$cell_2"/></div>
         </div>
     </xsl:template>
@@ -601,6 +639,7 @@
                                         <xsl:apply-templates>
                                             <xsl:with-param name="id" select="$id"/>
                                         </xsl:apply-templates>
+                                        <div class="row" style="height:1em"><div class="col-md-2">&#127;</div></div>
                                     </div>
                                 </div>
                             </div>
@@ -612,10 +651,11 @@
     </xsl:template>
     
     <xsl:template match="abstract">
-        <div class="row">
-            <div class="col-md-2"><strong>Abstract</strong></div>
-            <div class="col-md-9"><xsl:apply-templates/></div>
-        </div>
+        <xsl:call-template name="two_col_row">
+            <xsl:with-param name="cell_1">Abstract</xsl:with-param>
+            <xsl:with-param name="cell_2"><xsl:apply-templates/></xsl:with-param>
+        </xsl:call-template>
+        <p></p>
     </xsl:template>
     
     <xsl:template match="physloc">
@@ -623,6 +663,7 @@
             <xsl:with-param name="cell_1">Location</xsl:with-param>
             <xsl:with-param name="cell_2"><xsl:apply-templates/></xsl:with-param>
         </xsl:call-template>
+        <p></p>
     </xsl:template>
     
     <xsl:template match="unittitle">
@@ -651,7 +692,7 @@
     <xsl:template match="container">
         <xsl:call-template name="two_col_row">
             <xsl:with-param name="cell_1">Container</xsl:with-param>
-            <xsl:with-param name="cell_2"><xsl:value-of select="@type"/>:&#129;<xsl:value-of select="."/></xsl:with-param>
+            <xsl:with-param name="cell_2"><xsl:value-of select="@type"/>:&#129;<xsl:value-of select="@label"/></xsl:with-param>
         </xsl:call-template>
     </xsl:template>
 
@@ -671,6 +712,7 @@
     <!-- ################################ Physical Description Group ######################################### -->
     <xsl:template match="physdesc">
         <xsl:apply-templates/>
+        <p></p>
     </xsl:template>
     
     <xsl:template match="extent">
@@ -688,7 +730,24 @@
                 </xsl:call-template>
             </xsl:otherwise>
         </xsl:choose>
-         
+        <p></p>
+    </xsl:template>
+    
+    <xsl:template match="physdesc/genreform">
+        <xsl:choose>
+            <xsl:when test="@label">
+                <xsl:call-template name="two_col_row">
+                    <xsl:with-param name="cell_1"><xsl:value-of select="@label"/></xsl:with-param>
+                    <xsl:with-param name="cell_2"><xsl:value-of select="."/> &#129; <xsl:value-of select="@unit"/></xsl:with-param>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:call-template name="two_col_row">
+                    <xsl:with-param name="cell_1">Genre/Physical Characteristics</xsl:with-param>
+                    <xsl:with-param name="cell_2"><xsl:value-of select="."/> &#129; <xsl:value-of select="@unit"/></xsl:with-param>
+                </xsl:call-template>
+            </xsl:otherwise>
+        </xsl:choose>    
     </xsl:template>
     <!-- ################################ /Physical Description Group ######################################### -->
     <!-- ################################ Origination Group ######################################### -->
@@ -778,7 +837,10 @@
     
     <!-- ###### Arrangement ########## -->
     <xsl:template match="arrangement">
-        <xsl:apply-templates/>
+        <xsl:call-template name="two_col_row">
+            <xsl:with-param name="cell_1">Arrangement</xsl:with-param>
+            <xsl:with-param name="cell_2"><xsl:apply-templates/></xsl:with-param>
+        </xsl:call-template>
     </xsl:template>
     
     <!-- ###### /Arrangement ########## -->
